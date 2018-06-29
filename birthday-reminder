@@ -1,5 +1,5 @@
 #! python3
-# A program that sends a happy birthday email on the date of someone's birthday and sends everyone else a reminder email
+# birthday_reminder.py sends a happy birthday email on the date of someone's birthday and sends everyone else a reminder email
 # one week before and on the day of their birthday.
 
 import shelve, re, smtplib, calendar
@@ -94,6 +94,8 @@ def send_reminder_email(birthday_names, reminder=''):
             birthday_msg_list = sorted([msg for msg in birthday_msg_list if msg not in remove_bday_msg_list])
             reminder_msg = "\n".join(reminder_msg_list) + "\n"
             birthday_msg = "\n".join(birthday_msg_list) + "\n"
+        # If optional third argument of function (reminder) is either False or None.
+        # Emails a reminder of someone's birthday to everyone but the birthday person one week prior to their birthday.
         if not reminder:
             content = "\n".join([
                 "From: AVu120@gmail.com",
@@ -106,6 +108,8 @@ def send_reminder_email(birthday_names, reminder=''):
                 "Love,",
                 "Anthony Hien Vu"
                 ])
+        # If optional third argument of function (reminder) is neither False or None.
+        # Emails a reminder that it's someone's birthday today to everyone but the birthday person.
         else:
             content = "\n".join([
                 "From: AVu120@gmail.com",
@@ -130,7 +134,7 @@ def send_reminder_email(birthday_names, reminder=''):
 
 
 # Function of the main program.
-def run_reminder_program(): 
+def run_reminder_program():
     for name in birthdays:
         birthday = birthdays[name]
         birthday_day = int(first_2_digits_regex.search(birthday).group())
