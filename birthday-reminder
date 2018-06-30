@@ -67,36 +67,27 @@ def send_birthday_email(birthday_names):
 
 # Send everyone but the birthday person an email reminder of their birthday one week before and on the day of their birthday!
 def send_reminder_email(birthday_names, reminder=''):
-    reminder_msg = ""  # Create a one week reminder message to all email recipients except the birthday person.
-    birthday_msg = ""  # Create a birthday reminder message to the birthday person.
-    reminder_emails = list(emails.keys())
-    for name in sorted(list(birthday_names.keys())):
-        if name in reminder_emails and len(birthday_names) == 1:
-            reminder_emails.remove(name)
-        reminder_msg += ("It is " + name.title() + "'s birthday in exactly one week on " +
-                         calendar.day_name[birthday_names[name].weekday()].title() + ", " +
-                         str(birthday_names[name].day) + " " + calendar.month_name[birthday_names[name].month].title()
-                         + " " + str(birthday_names[name].year) + ".\n")
-        birthday_msg += ("It is " + name.title() + "'s birthday today!\n")
-    for name in reminder_emails:
-        if name in birthday_names: # Remove birthday person from the reminder email list so they're not reminded of their own birthday.
-            reminder_msg_list = reminder_msg.split("\n")
-            birthday_msg_list = birthday_msg.split("\n")
-            remove_reminder_msg_list = []
-            remove_bday_msg_list = []
-            for msg in reminder_msg_list:
-                if name.title() in msg:
-                    remove_reminder_msg_list.append(msg)
-            for msg in birthday_msg_list:
-                if name.title() in msg:
-                    remove_bday_msg_list.append(msg)
-            reminder_msg_list = sorted([msg for msg in reminder_msg_list if msg not in remove_reminder_msg_list])
-            birthday_msg_list = sorted([msg for msg in birthday_msg_list if msg not in remove_bday_msg_list])
-            reminder_msg = "\n".join(reminder_msg_list) + "\n"
-            birthday_msg = "\n".join(birthday_msg_list) + "\n"
-        # If optional third argument of function (reminder) is either False or None.
-        # Emails a reminder of someone's birthday to everyone but the birthday person one week prior to their birthday.
-        if not reminder:
+    # If optional third argument of function (reminder) is either False or None.
+    # Emails a reminder of someone's birthday to everyone but the birthday person one week prior to their birthday.
+    if not reminder:
+        reminder_msg = ""  # Create a one week reminder message to all email recipients except the birthday person.
+        reminder_emails = list(emails.keys())
+        for name in sorted(list(birthday_names.keys())):
+            if name in reminder_emails and len(birthday_names) == 1:
+                reminder_emails.remove(name)
+            reminder_msg += ("It is " + name.title() + "'s birthday in exactly one week on " +
+                             calendar.day_name[birthday_names[name].weekday()].title() + ", " +
+                             str(birthday_names[name].day) + " " + calendar.month_name[birthday_names[name].month].title()
+                             + " " + str(birthday_names[name].year) + ".\n")
+        for name in reminder_emails:
+            if name in birthday_names: # Remove birthday person from the reminder email list so they're not reminded of their own birthday.
+                reminder_msg_list = reminder_msg.split("\n")
+                remove_reminder_msg_list = []
+                for msg in reminder_msg_list:
+                    if name.title() in msg:
+                        remove_reminder_msg_list.append(msg)
+                reminder_msg_list = sorted([msg for msg in reminder_msg_list if msg not in remove_reminder_msg_list])
+                reminder_msg = "\n".join(reminder_msg_list) + "\n"
             content = "\n".join([
                 "From: AVu120@gmail.com",
                 "To: %s" % emails[name],
@@ -108,29 +99,49 @@ def send_reminder_email(birthday_names, reminder=''):
                 "Love,",
                 "Anthony Hien Vu"
                 ])
-        # If optional third argument of function (reminder) is neither False or None.
-        # Emails a reminder that it's someone's birthday today to everyone but the birthday person.
-        else:
+            mail = smtplib.SMTP("smtp.gmail.com", 587)
+            mail.ehlo()
+            mail.starttls()
+            mail.login("AVu120@gmail.com", "KTfneu97388725")
+            mail.sendmail("AVu120@gmail.com", emails[name], content)
+            mail.close()
+    # If optional third argument of function (reminder) is neither False or None.
+    # Emails a reminder that it's someone's birthday today to everyone but the birthday person.
+    else:
+        birthday_msg = ""  # Create a birthday reminder message to the birthday person.
+        reminder_emails = list(emails.keys())
+        for name in sorted(list(birthday_names.keys())):
+            if name in reminder_emails and len(birthday_names) == 1:
+                reminder_emails.remove(name)
+            birthday_msg += ("It is " + name.title() + "'s birthday today!\n")
+        for name in reminder_emails:
+            if name in birthday_names:  # Remove birthday person from the reminder email list so they're not reminded of their own birthday.
+                birthday_msg_list = birthday_msg.split("\n")
+                remove_bday_msg_list = []
+                for msg in birthday_msg_list:
+                    if name.title() in msg:
+                        remove_bday_msg_list.append(msg)
+                birthday_msg_list = sorted([msg for msg in birthday_msg_list if msg not in remove_bday_msg_list])
+                birthday_msg = "\n".join(birthday_msg_list) + "\n"
             content = "\n".join([
-                "From: AVu120@gmail.com",
-                "To: %s" % emails[name],
-                "Subject: Birthday Reminder",
-                "Hello " + name.title() + "!",
-                "",
-                "This is just a reminder.",
-                birthday_msg,
-                "Don't forget to wish them a happy birthday!",
-                "",
-                "Love,",
-                "Anthony Hien Vu"
-                ])
-
-        mail = smtplib.SMTP("smtp.gmail.com", 587)
-        mail.ehlo()
-        mail.starttls()
-        mail.login("AVu120@gmail.com", "KTfneu97388725")
-        mail.sendmail("AVu120@gmail.com", emails[name], content)
-        mail.close()
+                    "From: AVu120@gmail.com",
+                    "To: %s" % emails[name],
+                    "Subject: Birthday Reminder",
+                    "Hello " + name.title() + "!",
+                    "",
+                    "This is just a reminder.",
+                    birthday_msg,
+                    "Don't forget to wish them a happy birthday!",
+                    "",
+                    "Love,",
+                    "Anthony Hien Vu"
+                    ])
+            mail = smtplib.SMTP("smtp.gmail.com", 587)
+            mail.ehlo()
+            mail.starttls()
+            mail.login("AVu120@gmail.com", "KTfneu97388725")
+            mail.sendmail("AVu120@gmail.com", emails[name], content)
+            mail.close()
 
 
 # Function of the main program.
