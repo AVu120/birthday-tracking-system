@@ -31,13 +31,19 @@ birthday_file = shelve.open('birthdays') # Open stored shelf file.
 
 try:
     birthdays = birthday_file['birthdays']
-    emails = birthday_file['emails']
-    has_run_today = birthday_file['has_run_today']
 except KeyError:
     birthdays = {}
+
+try:
+    emails = birthday_file['emails']
+except KeyError:
     emails = {}
-    has_run_today = {}
-    has_run_today[today] = False
+
+try:
+    has_not_run = birthday_file['has_not_run']
+except KeyError:
+    has_not_run = {}
+    has_not_run[today] = False
 
 # Creates empty dictionaries to store the birthdays that occur today.
 birthday_email_dic = {}
@@ -171,11 +177,10 @@ def run_reminder_program():
     if len(one_week_reminder_email_dic) >= 1:
         send_reminder_email(one_week_reminder_email_dic, False)
 
-# Method call to run the program, program is only capable of running once in a day (I have set it up to automatically run when
-# my computer boots up.
-if not has_run_today[today]:
+# Method call to run the program.
+if not has_not_run[today]:
     run_reminder_program()
-    has_run_today[today] = True
-    birthday_file['has_run_today'] = has_run_today
+    has_not_run[today] = True
+    birthday_file['has_not_run'] = has_not_run
 
 birthday_file.close() # Close shelf file.
