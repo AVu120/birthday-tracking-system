@@ -2,8 +2,12 @@
 # A program that sends a happy birthday email on the date of someone's birthday and sends everyone else a reminder email
 # one week before and on the day of their birthday.
 
-import shelve, re, smtplib, calendar
+import calendar
+import re
+import shelve
+import smtplib
 from datetime import date
+from collections import Counter
 
 months = {"jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6, "jul": 7,
           "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12}
@@ -28,12 +32,12 @@ birthday_file = shelve.open('birthdays') # Open stored shelf file.
 try:
     birthdays = birthday_file['birthdays']
     emails = birthday_file['emails']
-    #has_run_today_record = birthday_file['has_not_run_today_record']
+    has_run_today = birthday_file['has_run_today']
 except KeyError:
     birthdays = {}
     emails = {}
-    #has_not_run_today_record = {}
-   # has_not_run_today_record[today] = True
+    has_run_today = {}
+    has_run_today[today] = False
 
 # Creates empty dictionaries to store the birthdays that occur today.
 birthday_email_dic = {}
@@ -86,7 +90,7 @@ def send_reminder_email(birthday_names, reminder=''):
                 for msg in reminder_msg_list:
                     if name.title() in msg:
                         remove_reminder_msg_list.append(msg)
-                reminder_msg_list = sorted([msg for msg in reminder_msg_list if msg not in remove_reminder_msg_list])
+                reminder_msg_list = list((Counter(reminder_msg_list-remove_reminder_msg_list)).elements())
                 reminder_msg = "\n".join(reminder_msg_list) + "\n"
             content = "\n".join([
                 "From: AVu120@gmail.com",
@@ -121,7 +125,7 @@ def send_reminder_email(birthday_names, reminder=''):
                 for msg in birthday_msg_list:
                     if name.title() in msg:
                         remove_bday_msg_list.append(msg)
-                birthday_msg_list = sorted([msg for msg in birthday_msg_list if msg not in remove_bday_msg_list])
+                birthday_msg_list = list((Counter(birthday_msg_list)-Counter(remove_bday_msg_list)).elements())
                 birthday_msg = "\n".join(birthday_msg_list) + "\n"
             content = "\n".join([
                     "From: AVu120@gmail.com",
@@ -160,7 +164,6 @@ def run_reminder_program():
         # If a birthday is one week / 7 days from today's date.
         if days_until_birthday == 7:
             one_week_reminder_email_dic[name] = birthday_date
-
     if len(birthday_email_dic) >= 1:
         send_birthday_email(birthday_email_dic)
     if len(birthday_reminder_email_dic) >= 1:
@@ -168,12 +171,11 @@ def run_reminder_program():
     if len(one_week_reminder_email_dic) >= 1:
         send_reminder_email(one_week_reminder_email_dic, False)
 
-run_reminder_program()
-# Method call to run the program.
-#if not has_run_today_record[today]:
-    #run_reminder_program()
-    #has_run_today_record[today] = True
-    #birthday_file['has_run_today_record'] = has_run_today_record
-
+# Method call to run the program, program is only capable of running once in a day (I have set it up to automatically run when
+# my computer boots up.
+if not has_run_today[today]:
+    run_reminder_program()
+    has_run_today[today] = True
+    birthday_file['has_run_today'] = has_run_today
 
 birthday_file.close() # Close shelf file.
