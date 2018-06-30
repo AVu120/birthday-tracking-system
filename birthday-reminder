@@ -1,5 +1,5 @@
 #! python3
-# birthday_reminder.py sends a happy birthday email on the date of someone's birthday and sends everyone else a reminder email
+# A program that sends a happy birthday email on the date of someone's birthday and sends everyone else a reminder email
 # one week before and on the day of their birthday.
 
 import shelve, re, smtplib, calendar
@@ -28,12 +28,12 @@ birthday_file = shelve.open('birthdays') # Open stored shelf file.
 try:
     birthdays = birthday_file['birthdays']
     emails = birthday_file['emails']
-    # has_run_today_record = birthday_file['has_run_today_record']
+    #has_run_today_record = birthday_file['has_not_run_today_record']
 except KeyError:
     birthdays = {}
     emails = {}
-    # has_run_today_record = {}
-    # has_run_today_record[date.today()] = False
+    #has_not_run_today_record = {}
+   # has_not_run_today_record[today] = True
 
 # Creates empty dictionaries to store the birthdays that occur today.
 birthday_email_dic = {}
@@ -157,13 +157,12 @@ def run_reminder_program():
     if len(one_week_reminder_email_dic) >= 1:
         send_reminder_email(one_week_reminder_email_dic, False)
 
-
-# Method call to run the program.
 run_reminder_program()
-"""
-if not has_run_today_record[today]:
-    run_reminder_program()
-    has_run_today_record[today] = True
-    birthday_file['has_run_today_record'] = has_run_today_record
-"""
+# Method call to run the program.
+#if not has_run_today_record[today]:
+    #run_reminder_program()
+    #has_run_today_record[today] = True
+    #birthday_file['has_run_today_record'] = has_run_today_record
+
+
 birthday_file.close() # Close shelf file.
