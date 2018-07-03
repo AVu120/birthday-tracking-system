@@ -44,6 +44,13 @@ try:
 except KeyError:
     has_not_run = {}
     has_not_run[today] = False
+    has_not_run_today = has_not_run[today]
+try:
+    has_not_run_today = has_not_run[today]
+except KeyError:
+    has_not_run[today] = False
+    has_not_run_today = has_not_run[today]
+
 
 # Creates empty dictionaries to store the birthdays that occur today.
 birthday_email_dic = {}
@@ -54,10 +61,11 @@ one_week_reminder_email_dic = {}
 # Send the birthday person a happy birthday email!
 def send_birthday_email(birthday_names):
     for name in birthday_names:
-        content = "\n".join([
-            "From: AVu120@gmail.com",
+        content = "\r\n".join([
+            "From: anhivu120@gmail.com",
             "To: %s" % birthday_names[name],
             "Subject: Happy Birthday",
+            "",
             "Hello " + name.title() + "!",
             "",
             "Happy birthday!",
@@ -70,8 +78,8 @@ def send_birthday_email(birthday_names):
         mail = smtplib.SMTP("smtp.gmail.com", 587)
         mail.ehlo()
         mail.starttls()
-        mail.login("AVu120@gmail.com", "KTfneu97388725")
-        mail.sendmail("AVu120@gmail.com", birthday_names[name], content)
+        mail.login("anhivu120@gmail.com", "KTfneu973")
+        mail.sendmail("anhivu120@gmail.com", birthday_names[name], content)
         mail.close()
 
 
@@ -98,10 +106,11 @@ def send_reminder_email(birthday_names, reminder=''):
                         remove_reminder_msg_list.append(msg)
                 reminder_msg_list = list((Counter(reminder_msg_list-remove_reminder_msg_list)).elements())
                 reminder_msg = "\n".join(reminder_msg_list) + "\n"
-            content = "\n".join([
-                "From: AVu120@gmail.com",
+            content = "\r\n".join([
+                "From: anhivu120@gmail.com",
                 "To: %s" % emails[name],
                 "Subject: Birthday Reminder",
+                "",
                 "Hello " + name.title() + "!",
                 "",
                 "This is just a reminder.",
@@ -112,9 +121,10 @@ def send_reminder_email(birthday_names, reminder=''):
             mail = smtplib.SMTP("smtp.gmail.com", 587)
             mail.ehlo()
             mail.starttls()
-            mail.login("AVu120@gmail.com", "KTfneu97388725")
-            mail.sendmail("AVu120@gmail.com", emails[name], content)
+            mail.login("anhivu120@gmail.com", "KTfneu973")
+            mail.sendmail("anhivu120@gmail.com", emails[name], content)
             mail.close()
+
     # If optional third argument of function (reminder) is neither False or None.
     # Emails a reminder that it's someone's birthday today to everyone but the birthday person.
     else:
@@ -133,10 +143,11 @@ def send_reminder_email(birthday_names, reminder=''):
                         remove_bday_msg_list.append(msg)
                 birthday_msg_list = list((Counter(birthday_msg_list)-Counter(remove_bday_msg_list)).elements())
                 birthday_msg = "\n".join(birthday_msg_list) + "\n"
-            content = "\n".join([
-                    "From: AVu120@gmail.com",
+            content = "\r\n".join([
+                    "From: anhivu120@gmail.com",
                     "To: %s" % emails[name],
                     "Subject: Birthday Reminder",
+                    "",
                     "Hello " + name.title() + "!",
                     "",
                     "This is just a reminder.",
@@ -149,8 +160,8 @@ def send_reminder_email(birthday_names, reminder=''):
             mail = smtplib.SMTP("smtp.gmail.com", 587)
             mail.ehlo()
             mail.starttls()
-            mail.login("AVu120@gmail.com", "KTfneu97388725")
-            mail.sendmail("AVu120@gmail.com", emails[name], content)
+            mail.login("anhivu120@gmail.com", "KTfneu973")
+            mail.sendmail("anhivu120@gmail.com", emails[name], content)
             mail.close()
 
 
@@ -177,10 +188,12 @@ def run_reminder_program():
     if len(one_week_reminder_email_dic) >= 1:
         send_reminder_email(one_week_reminder_email_dic, False)
 
-# Method call to run the program.
-if not has_not_run[today]:
+# Method call to run the program a maximum number of once per day (to prevent everyone in the email database being spammed with multiple
+# reminder emails in a day.
+if not has_not_run_today:
     run_reminder_program()
     has_not_run[today] = True
     birthday_file['has_not_run'] = has_not_run
+
 
 birthday_file.close() # Close shelf file.
