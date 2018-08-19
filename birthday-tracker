@@ -1,6 +1,8 @@
 #! python3
 # A program that lets you keep track of all the important birthdays and dates in your life. The following produces the user interface
-# and the database that contains all the birthdays and the email reminder list as input by the user.
+# and the database that contains all the birthdays and the email reminder list as input by the user. The other program made in
+# 'birthday-reminder' performs a daily database check to see if it's anyone's birthday today or in 7 days and subseqently sends out
+# email alerts alerting/reminding everyone if either is true.
 
 import shelve, re
 
