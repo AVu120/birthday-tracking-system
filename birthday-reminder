@@ -189,7 +189,8 @@ def run_reminder_program():
         send_reminder_email(one_week_reminder_email_dic, False)
 
 # Method call to run the program a maximum number of once per day (to prevent everyone in the email database being spammed with multiple
-# reminder emails in a day.
+# reminder emails in a day). The program/script needs to be scheduled to run at a particular time each day or upon computer/system 
+# start-up however it will never run more than once each day.
 if not has_not_run_today:
     run_reminder_program()
     has_not_run[today] = True
