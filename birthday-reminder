@@ -1,6 +1,6 @@
 #! python3
-# A program that sends a happy birthday email on the date of someone's birthday and sends everyone else a reminder email
-# one week before and on the day of their birthday.
+# A program that checks the database made in 'birthday-tracker' and subsequently sends a happy birthday email to the birthday
+# person on the date of their birthday and sends everyone else a reminder email one week before and on the day of their birthday.
 
 import calendar
 import re
